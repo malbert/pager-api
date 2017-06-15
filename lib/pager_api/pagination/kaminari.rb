@@ -10,7 +10,11 @@ module PagerApi
 
         options[:json] = paginated_collection
 
-        options[:meta] = meta(paginated_collection, options) if PagerApi.include_pagination_on_meta?
+        if PagerApi.include_pagination_on_meta?
+          pagination_options = meta(paginated_collection, options)
+          options[:meta] = {} unless options[:meta].present?
+          options[:meta].merge! pagination_options
+        end
 
         pagination_headers(paginated_collection) if PagerApi.include_pagination_headers?
         render options
